@@ -1,12 +1,32 @@
-import router from "./routes/index";
+const redis = require('redis');
+const { promisify } = require('util');
 
-const express = require("express");
-// create the Express server
-const app = express();
-const port = process.env.PORT || 5000;
+class RedisClient {
+  constructor() {
+    this.client = redis.createClient();
+    this.getAsync = promisify(this.client.get).bind(this.client);
 
-router(app);
+    this.client.on('error', (error) => console.error(`Redis client not connected to the server: ${error}`));
+  }
 
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
-});
+  isAlive() {
+    return this.client.connected;
+  }
+
+  async get(key) {
+    const value = await this.getAsync(key);
+    return value;
+  }
+
+  async set(key, value, duration) {
+    this.client.set(key, value);
+    this.client.expire(key, duration);
+  }
+
+  async del(key) {
+    this.client.del(key);
+  }
+}
+
+const redisClient = new RedisClient();
+export default redisClient;
