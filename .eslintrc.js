@@ -15,12 +15,6 @@ module.exports = {
   },
   plugins: ['jest'],
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-      },
-    ],
     'max-classes-per-file': 'off',
     'no-underscore-dangle': 'off',
     'no-console': 'off',
