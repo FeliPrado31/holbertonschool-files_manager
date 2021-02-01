@@ -1,5 +1,5 @@
-import RedisClient from "../utils/redis";
-import DBClient from "../utils/db";
+import RedisClient from '../utils/redis';
+import DBClient from '../utils/db';
 
 class AppController {
   static getStatus(req, res) {
