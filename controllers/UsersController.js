@@ -1,5 +1,5 @@
-const sha1 = require("sha1");
-const dbClient = require("../utils/db");
+const sha1 = require('sha1');
+const dbClient = require('../utils/db');
 
 /**
  * postNew - callback for route POST /users
@@ -7,22 +7,25 @@ const dbClient = require("../utils/db");
 async function postNew(req, res) {
   const { email, password } = req.body;
 
-  if (!email) res.status(400).json({ error: "Missing email" });
-  if (!password) res.status(400).json({ error: "Missing password " });
+  if (!email) res.status(400).json({ error: 'Missing email' });
+  if (!password) res.status(400).json({ error: 'Missing password ' });
 
   // check if email already exists in db
   const found = await dbClient.client
-    .collection("users")
+    .collection('users')
     .find({ email })
     .count();
-  if (found > 0) return res.status(400).json({ error: "Already exist" });
+  if (found > 0) return res.status(400).json({ error: 'Already exist' });
   // encrypt password and insert user in datbase
   const user = await dbClient.client
-    .collection("users")
+    .collection('users')
     .insertOne({ email, password: sha1(password) });
-  if (user)
-    res.status(201).json({ id: user.ops[0]._id, email: user.ops[0].email });
-  else res.status(500).json({ error: "Could not create user" });
+  if (user) {
+    return res
+      .status(201)
+      .json({ id: user.ops[0]._id, email: user.ops[0].email });
+  }
+  return res.status(500).json({ error: 'Could not create user' });
 }
 
 module.exports = { postNew };
